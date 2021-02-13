@@ -8,15 +8,15 @@
 		// To be used in a comparison with the new log being created. If they are the same don't print the same log twice
 		private static string preivousLog = string.Empty;
 
-		public static void Message(string gameobjectName = "", string message = "Method has executed.", bool isSinglePrint = false) {
+		public static void Message(string message = "Method has executed.", string gameobjectName = "", bool isSinglePrint = false) {
 			Log(LogType.Log, gameobjectName, message, isSinglePrint);
 		}
 
-		public static void Warning(string gameobjectName = "", string message = "Method has executed.", bool isSinglePrint = false) {
+		public static void Warning(string message = "Method has executed.", string gameobjectName = "", bool isSinglePrint = false) {
 			Log(LogType.Warning, gameobjectName, message, isSinglePrint);
 		}
 
-		public static void Error(string gameobjectName = "", string message = "Method has executed.", bool isSinglePrint = false) {
+		public static void Error(string message = "Method has executed.", string gameobjectName = "", bool isSinglePrint = false) {
 			Log(LogType.Error, gameobjectName, message, isSinglePrint);
 		}
 
