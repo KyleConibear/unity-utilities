@@ -8,52 +8,61 @@
 		// To be used in a comparison with the new log being created. If they are the same don't print the same log twice
 		private static string preivousLog = string.Empty;
 
-		public static void Message(string message = "Method has executed.", string gameobjectName = "", bool isSinglePrint = false) {
-			Log(LogType.Log, gameobjectName, message, isSinglePrint);
+		public static void Message(string message = "Method has executed.", UnityEngine.Object context = null, bool isSinglePrint = false) {
+			Log(LogType.Log, context, message, isSinglePrint);
 		}
 
-		public static void Warning(string message = "Method has executed.", string gameobjectName = "", bool isSinglePrint = false) {
-			Log(LogType.Warning, gameobjectName, message, isSinglePrint);
+		public static void Warning(string message = "Method has executed.", UnityEngine.Object context = null, bool isSinglePrint = false) {
+			Log(LogType.Warning, context, message, isSinglePrint);
 		}
 
-		public static void Error(string message = "Method has executed.", string gameobjectName = "", bool isSinglePrint = false) {
-			Log(LogType.Error, gameobjectName, message, isSinglePrint);
+		public static void Error(string message = "Method has executed.", UnityEngine.Object context = null, bool isSinglePrint = false) {
+			Log(LogType.Error, context, message, isSinglePrint);
 		}
 
-		private static void Log(LogType type, string gameobjectName, string message, bool isSinglePrint) {
-			StackFrame frame = new StackFrame(2);
+		private static void Log(LogType type, UnityEngine.Object context, string message, bool isSinglePrint) {
+			StackTrace trace = new StackTrace(true);
+			var stackFrame = trace.GetFrame(2);
 
 			StringBuilder log = new StringBuilder();
 
-			string callers_method_name = frame.GetMethod().Name;
+			var fullFileName = stackFrame.GetFileName();
+			int indexOfFileStart = fullFileName.IndexOf("Assets");
+			string shortFileName = fullFileName.Substring(indexOfFileStart, fullFileName.Length - indexOfFileStart);
+			string className = stackFrame.GetMethod().DeclaringType.Name;
+			string methodName = stackFrame.GetMethod().Name;
 
-			string callers_class_name = frame.GetMethod().DeclaringType.Name;
+			var lineNumber = stackFrame.GetFileLineNumber();
 
 			// Create signature
-			string signature = $"[{gameobjectName}]:{callers_class_name}.{callers_method_name}";
+			
+			string signature = $"{context.name}\\{className}.{methodName}:{lineNumber}";
 
-			log.Append(signature + message);
-
+#if UNITY_EDITOR
+			log.Append($"<b>{message}</b>" + $"\n{shortFileName}-{signature}");
+			#else
+			log.Append(message + $"\n{shortFileName}-{signature}");
+#endif
 			if (isSinglePrint) {
 				if (log.ToString() != preivousLog) {
 					preivousLog = log.ToString();
-					PrintLogByType(type, log.ToString());
+					PrintLogByType(type, log.ToString(), context);
 				}
 			} else {
-				PrintLogByType(type, log.ToString());
+				PrintLogByType(type, log.ToString(), context);
 			}
 		}
 
-		private static void PrintLogByType(LogType type, string message) {
+		private static void PrintLogByType(LogType type, string message, UnityEngine.Object context) {
 			switch (type) {
 				default:
-					UnityEngine.Debug.Log(message);
+					UnityEngine.Debug.Log(message, context);
 					break;
 				case LogType.Warning:
-					UnityEngine.Debug.LogWarning(message);
+					UnityEngine.Debug.LogWarning(message, context);
 					break;
 				case LogType.Error:
-					UnityEngine.Debug.LogError(message);
+					UnityEngine.Debug.LogError(message, context);
 					break;
 			}
 		}
