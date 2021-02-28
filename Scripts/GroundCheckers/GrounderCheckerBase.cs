@@ -5,7 +5,8 @@
 	public abstract class GrounderCheckerBase : MonoBehaviour {
 		#region Internal Consts
 
-		private const float MinimumGroundDistanceThreshold = 0.01f;
+		[Tooltip("Distance in addition to the edge of the Collider")]
+		protected const float GroundedBufferDistance = 0.1f;
 
 		#endregion
 
@@ -14,7 +15,7 @@
 
 		[Header("Result")]
 		[ShowOnly] [SerializeField]
-		private bool m_IsGrounded;
+		protected bool m_IsGrounded;
 
 		#endregion
 
@@ -28,8 +29,10 @@
 
 		#region Public Properties
 
-		public bool IsGrounded(out RaycastHit hit) {
-			m_IsGrounded = Physics.Raycast(transform.position, -transform.up, out hit, this.DistanceToGround, this.TargetLayer);
+		public virtual bool IsGrounded(out RaycastHit hit) {
+			var rayDirection = -transform.up;
+			m_IsGrounded = Physics.Raycast(transform.position, rayDirection, out hit, this.DistanceToGround, this.TargetLayer);
+			//Debug.DrawRay(transform.position, rayDirection, Color.red, this.DistanceToGround);
 			return m_IsGrounded;
 		}
 
@@ -43,7 +46,7 @@
 		private LayerMask m_TargetLayer;
 
 		[SerializeField]
-		[Range(MinimumGroundDistanceThreshold, 1)]
+		//[Range(GroundedBufferDistance, 1)]
 		private float m_GroundDistanceThreshold = 0.025f;
 
 		#endregion
@@ -61,30 +64,11 @@
 			}
 		}
 
-		private float GroundDistanceThreshold {
-			get {
-				if (m_GroundDistanceThreshold < MinimumGroundDistanceThreshold) {
-					Print.Warning($"GroundDistanceThreshold cannot be less than {MinimumGroundDistanceThreshold}\nm_GroundDistanceThreshold: <{m_GroundDistanceThreshold}>", this);
-					m_GroundDistanceThreshold = MinimumGroundDistanceThreshold;
-				}
-
-				return m_GroundDistanceThreshold;
-			}
-		}
-
 		protected abstract float DistanceToEdgeOfCollider();
-		private float DistanceToGround => DistanceToEdgeOfCollider() + this.GroundDistanceThreshold;
+		protected float DistanceToGround => DistanceToEdgeOfCollider() + GroundedBufferDistance;
 
 
-		private LayerMask TargetLayer {
-			get {
-				if (m_TargetLayer == 0) {
-					m_TargetLayer = 1 << 8; // Default layers
-				}
-
-				return m_TargetLayer;
-			}
-		}
+		protected LayerMask TargetLayer => m_TargetLayer;
 
 		#endregion
 	}
