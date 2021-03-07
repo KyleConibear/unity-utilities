@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿namespace Conibear {
+	using UnityEngine;
 
-public class ShowOnlyAttribute : PropertyAttribute {
+	public class ShowOnlyAttribute : PropertyAttribute {
+	}
 }

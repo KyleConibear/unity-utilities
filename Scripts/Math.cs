@@ -1,7 +1,30 @@
-﻿using UnityEngine;
+﻿namespace Conibear {
+	using UnityEngine;
 
-namespace Conibear {
 	public static class Math {
+		/// <summary>
+		/// simple function to add a curved bias towards 1 for a value in the 0-1 range
+		/// </summary>
+		public static float CurveFactor(float factor) {
+			return 1 - (1 - factor) * (1 - factor);
+		}
+
+
+		/// <summary>
+		/// unclamped version of Lerp, to allow value to exceed the from-to range
+		/// </summary>
+		public static float ULerp(float from, float to, float value) {
+			return (1.0f - value) * from + value * to;
+		}
+
+		public static Vector3 PositionLerp(Vector3 startPosition, Vector3 endPosition, AnimationCurve animationCurve, float normalizedTime) {
+			return Vector3.Lerp(startPosition, endPosition, animationCurve.Evaluate(normalizedTime));
+		}
+
+		public static Vector3 PositionLerp(Vector3 startPosition, Vector3 endPosition, Vector3 direction, AnimationCurve animationCurve, float normalizedTime, float time) {
+			return Vector3.Lerp(startPosition, endPosition, normalizedTime) + (animationCurve.Evaluate(time) * direction);
+		}
+
 		/// <summary>
 		/// Determine if an object is on the left or right based on there relative angle
 		/// </summary>

@@ -8,6 +8,9 @@
 		// To be used in a comparison with the new log being created. If they are the same don't print the same log twice
 		private static string preivousLog = string.Empty;
 
+		public static void NotInitializedWarning(Component component) {
+			Warning($"{component.name} not initialized on Awake");
+		}
 		public static void Message(string message = "Method has executed.", UnityEngine.Object context = null, bool isSinglePrint = false) {
 			Log(LogType.Log, context, message, isSinglePrint);
 		}
