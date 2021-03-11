@@ -15,8 +15,11 @@
 
 		[Header("Result")]
 		[ShowOnly] [SerializeField]
-		protected bool m_IsGrounded;
+		protected bool m_IsTransformGrounded;
 
+		[ShowOnly] [SerializeField]
+		protected bool m_IsRigidbodyGrounded;
+		
 		#endregion
 
 
@@ -29,13 +32,21 @@
 
 		#region Public Properties
 
-		public virtual bool IsGrounded(out RaycastHit hit) {
+		public virtual bool IsTransformGrounded(out RaycastHit hit) {
 			var rayDirection = -transform.up;
-			m_IsGrounded = Physics.Raycast(transform.position, rayDirection, out hit, this.DistanceToGround, this.TargetLayer);
-			//Debug.DrawRay(transform.position, rayDirection, Color.red, this.DistanceToGround);
-			return m_IsGrounded;
+			m_IsTransformGrounded = Physics.Raycast(transform.position, rayDirection, out hit, this.DistanceToGround, this.TargetLayer);
+			Debug.DrawRay(transform.position, rayDirection, Color.blue, this.DistanceToGround);
+			return m_IsTransformGrounded;
 		}
 
+		public virtual bool IsRigidbodyGrounded(Rigidbody rigidbody, out RaycastHit hit) {
+			var rbPos = rigidbody.position;
+			var rayDirection = new Vector3(rbPos.x, -rbPos.y, rbPos.z);
+			m_IsRigidbodyGrounded = Physics.Raycast(rbPos, rayDirection, out hit, this.DistanceToGround, this.TargetLayer);
+			Debug.DrawRay(rbPos, rayDirection, Color.red, this.DistanceToGround);
+			return m_IsRigidbodyGrounded;
+		}
+		
 		#endregion
 
 

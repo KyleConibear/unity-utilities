@@ -2,6 +2,17 @@
 	using UnityEngine;
 
 	public static class Math {
+
+		/// <summary>
+		/// The maximum obtainable velocity at a given force value
+		/// </summary>
+		/// <param name="rigidbody">The rigidbody the force is applied to</param>
+		/// <param name="force">The force value applied to the rigidbody</param>
+		/// <returns></returns>
+		public static float TerminalVelocity(Rigidbody rigidbody, Vector3 force) {
+			return ((force.magnitude / rigidbody.drag) - Time.fixedDeltaTime * force.magnitude) / rigidbody.mass;
+		}
+		
 		/// <summary>
 		/// simple function to add a curved bias towards 1 for a value in the 0-1 range
 		/// </summary>
